@@ -1,4 +1,4 @@
-package com.bassem.feedback.models;
+package com.bassem.feedback.models.datamodels;
 
 import com.google.gson.annotations.SerializedName;
 

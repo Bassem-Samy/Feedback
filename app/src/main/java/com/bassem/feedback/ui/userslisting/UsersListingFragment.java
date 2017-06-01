@@ -1,7 +1,6 @@
 package com.bassem.feedback.ui.userslisting;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,12 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bassem.feedback.R;
-import com.bassem.feedback.models.User;
+import com.bassem.feedback.models.UserFeedbackInfoItem;
+import com.bassem.feedback.models.datamodels.User;
 import com.bassem.feedback.utils.Constants;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.text.DateFormat;
 import java.util.List;
 
 /**
@@ -56,7 +55,7 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
         super.onActivityCreated(savedInstanceState);
         Gson gson = new GsonBuilder().setDateFormat(Constants.INTERACTIONS_DATE_FORMAT).create();
         UsersListingPresenterImpl presenter = new UsersListingPresenterImpl(this, new UsersListingInteractorImpl(getContext().getAssets(), gson));
-        presenter.loadUsers(Constants.USERS_JSON_FILE_NAME);
+        presenter.loadUsersFeedbackInfoItems(Constants.USERS_JSON_FILE_NAME);
     }
 
     @Override
@@ -77,7 +76,7 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     }
 
     @Override
-    public void updateData(List<User> items) {
+    public void updateData(List<UserFeedbackInfoItem> items) {
 
     }
 
@@ -94,6 +93,12 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     @Override
     public void hideProgress() {
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // call presenter onDestroy();
     }
 
     /**

@@ -1,7 +1,10 @@
 package com.bassem.feedback.ui.userslisting;
 
-import com.bassem.feedback.models.User;
+import com.bassem.feedback.models.UserFeedbackInfoItem;
+import com.bassem.feedback.models.UserFeedbackInfoItemType;
+import com.bassem.feedback.utils.Constants;
 
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -25,20 +28,22 @@ public class UsersListingPresenterImpl implements UsersListingPresenter {
 
     /**
      * Loads users from json file in assets folder
+     *
      * @param fileName to load json from
      */
     @Override
-    public void loadUsers(String fileName) {
+    public void loadUsersFeedbackInfoItems(String fileName) {
         disposeLoadUsersSubscription();
-        mDisposable = mInteractor.getUsersFromAssetsFile(fileName)
+        mDisposable = mInteractor.getUsersFeedbackInfoItemsFromAssetsFile(fileName)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(
-                        new Consumer<List<User>>() {
+                        new Consumer<List<UserFeedbackInfoItem>>() {
                             @Override
-                            public void accept(List<User> users) throws Exception {
+                            public void accept(List<UserFeedbackInfoItem> items) throws Exception {
                                 mView.hideProgress();
-                                if (users != null && users.size() > 0) {
-                                    mView.updateData(users);
+                                if (items != null && items.size() > 0) {
+                                    prepareUsersFeedbackInfoItems(items);
+                                    mView.updateData(items);
                                 } else {
                                     mView.showError();
                                 }
@@ -50,6 +55,34 @@ public class UsersListingPresenterImpl implements UsersListingPresenter {
                                 mView.showError();
                             }
                         });
+    }
+
+    /**
+     * Sorts  the items by last interaction time difference
+     * Then add section items in correct indices
+     * @param items
+     */
+    @Override
+    public void prepareUsersFeedbackInfoItems(List<UserFeedbackInfoItem> items) {
+        Collections.sort(items);
+        UserFeedbackInfoItem giveFeedbackSectionItem = new UserFeedbackInfoItem();
+        giveFeedbackSectionItem.setType(UserFeedbackInfoItemType.SECTION);
+        items.add(0, giveFeedbackSectionItem);
+        int recentlyGivenFeedbackIndex = -1;
+        for (int i = 1; i < items.size(); i++) {
+            if (items.get(i).getLastFeedbackTimeDifference() < Constants.LAST_INTERACTION_THRESHOLD) {
+                recentlyGivenFeedbackIndex = i;
+                break;
+            }
+        }
+        UserFeedbackInfoItem recentlyGivenFeedbackItem = new UserFeedbackInfoItem();
+        recentlyGivenFeedbackItem.setType(UserFeedbackInfoItemType.SECTION);
+        if (recentlyGivenFeedbackIndex > -1) {
+            items.add(recentlyGivenFeedbackIndex, recentlyGivenFeedbackItem);
+        } else {
+            items.add(recentlyGivenFeedbackItem);
+        }
+
     }
 
     @Override

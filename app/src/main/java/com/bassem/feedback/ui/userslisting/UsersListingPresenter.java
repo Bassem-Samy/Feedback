@@ -1,6 +1,6 @@
 package com.bassem.feedback.ui.userslisting;
 
-import com.bassem.feedback.models.User;
+import com.bassem.feedback.models.UserFeedbackInfoItem;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import java.util.List;
  */
 
 public interface UsersListingPresenter {
-    void loadUsers(String fileName);
+    void loadUsersFeedbackInfoItems(String fileName);
+    void prepareUsersFeedbackInfoItems(List<UserFeedbackInfoItem> items);
     void onDestroy();
 }

@@ -2,15 +2,13 @@ package com.bassem.feedback.ui.userslisting;
 
 import android.content.res.AssetManager;
 
-import com.bassem.feedback.models.User;
-import com.bassem.feedback.models.UsersResponse;
+import com.bassem.feedback.models.UserFeedbackInfoItem;
+import com.bassem.feedback.models.datamodels.UsersResponse;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -31,7 +29,7 @@ public class UsersListingInteractorImpl implements UsersListingInteractor {
     }
 
     @Override
-    public Single<List<User>> getUsersFromAssetsFile(final String fileName) {
+    public Single<List<UserFeedbackInfoItem>> getUsersFeedbackInfoItemsFromAssetsFile(final String fileName) {
         // open the file using asset maanger and return a buffered reader then map it to return a list of users
         return Single.fromCallable(new Callable<BufferedReader>() {
             @Override
@@ -39,9 +37,9 @@ public class UsersListingInteractorImpl implements UsersListingInteractor {
                 InputStream stream = mAssetManager.open(fileName);
                 return new BufferedReader(new InputStreamReader(stream));
             }
-        }).map(new Function<BufferedReader, List<User>>() {
+        }).map(new Function<BufferedReader, List<UserFeedbackInfoItem>>() {
             @Override
-            public List<User> apply(BufferedReader bufferedReader) throws Exception {
+            public List<UserFeedbackInfoItem> apply(BufferedReader bufferedReader) throws Exception {
                 UsersResponse res = mGson.fromJson(bufferedReader, UsersResponse.class);
                 if (res != null) {
                     return res.getUsers();

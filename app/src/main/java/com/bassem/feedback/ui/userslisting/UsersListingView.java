@@ -1,6 +1,6 @@
 package com.bassem.feedback.ui.userslisting;
 
-import com.bassem.feedback.models.User;
+import com.bassem.feedback.models.UserFeedbackInfoItem;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import java.util.List;
  */
 
 public interface UsersListingView {
-    void updateData(List<User> items);
+    void updateData(List<UserFeedbackInfoItem> items);
     void showError();
     void showProgress();
     void hideProgress();

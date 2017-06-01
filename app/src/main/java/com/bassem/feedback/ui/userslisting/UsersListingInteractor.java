@@ -1,9 +1,6 @@
 package com.bassem.feedback.ui.userslisting;
 
-import android.content.res.AssetManager;
-
-import com.bassem.feedback.models.User;
-import com.google.gson.Gson;
+import com.bassem.feedback.models.UserFeedbackInfoItem;
 
 import java.util.List;
 
@@ -14,5 +11,5 @@ import io.reactivex.Single;
  */
 
 public interface UsersListingInteractor {
-    Single<List<User>> getUsersFromAssetsFile(String fileName);
+    Single<List<UserFeedbackInfoItem>> getUsersFeedbackInfoItemsFromAssetsFile(String fileName);
 }
