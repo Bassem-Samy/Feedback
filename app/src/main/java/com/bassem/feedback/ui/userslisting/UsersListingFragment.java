@@ -4,11 +4,15 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.bassem.feedback.R;
+import com.bassem.feedback.adapters.UsersListingAdapter;
 import com.bassem.feedback.models.UserFeedbackInfoItem;
 import com.bassem.feedback.models.datamodels.User;
 import com.bassem.feedback.ui.userslisting.di.DaggerUsersListingComponent;
@@ -20,6 +24,9 @@ import com.google.gson.GsonBuilder;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A simple Fragment that displays list of users with their feedback statuses.
@@ -34,6 +41,10 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     private OnFragmentInteractionListener mListener;
     @Inject
     UsersListingPresenterImpl presenter;
+    @BindView(R.id.rclr_users)
+    RecyclerView usersRecyclerView;
+    @BindView(R.id.prgrs_main)
+    ProgressBar mainProgressBar;
 
     public UsersListingFragment() {
         // Required empty public constructor
@@ -47,6 +58,7 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         DaggerUsersListingComponent.builder().usersListingModule(new UsersListingModule(this, getContext())).build().inject(this);
 
     }
@@ -55,7 +67,9 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_users_listing, container, false);
+        View view = inflater.inflate(R.layout.fragment_users_listing, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
@@ -85,6 +99,11 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     @Override
     public void updateData(List<UserFeedbackInfoItem> items) {
 
+        UsersListingAdapter adapter = new UsersListingAdapter(items, null, getContext());
+        LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        usersRecyclerView.setLayoutManager(manager);
+        usersRecyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -94,12 +113,12 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
 
     @Override
     public void showProgress() {
-
+        mainProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideProgress() {
-
+        mainProgressBar.setVisibility(View.GONE);
     }
 
     @Override

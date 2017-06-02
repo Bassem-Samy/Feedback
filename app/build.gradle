@@ -19,7 +19,7 @@ android {
     }
 }
 def daggerVersion="2.11"
-
+def glideVersion="3.8.0"
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -46,4 +46,10 @@ dependencies {
     //Butterknife
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    // Circular Image
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+    // Glide
+    compile "com.github.bumptech.glide:glide:${glideVersion}"
+
+
 }

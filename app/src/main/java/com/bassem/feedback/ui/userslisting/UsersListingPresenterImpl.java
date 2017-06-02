@@ -34,6 +34,7 @@ public class UsersListingPresenterImpl implements UsersListingPresenter {
     @Override
     public void loadUsersFeedbackInfoItems(String fileName) {
         disposeLoadUsersSubscription();
+        mView.showProgress();
         mDisposable = mInteractor.getUsersFeedbackInfoItemsFromAssetsFile(fileName)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(
@@ -52,6 +53,7 @@ public class UsersListingPresenterImpl implements UsersListingPresenter {
                         , new Consumer<Throwable>() {
                             @Override
                             public void accept(Throwable throwable) throws Exception {
+                                mView.hideProgress();
                                 mView.showError();
                             }
                         });
@@ -60,6 +62,7 @@ public class UsersListingPresenterImpl implements UsersListingPresenter {
     /**
      * Sorts  the items by last interaction time difference
      * Then add section items in correct indices
+     *
      * @param items
      */
     @Override
@@ -67,6 +70,7 @@ public class UsersListingPresenterImpl implements UsersListingPresenter {
         Collections.sort(items);
         UserFeedbackInfoItem giveFeedbackSectionItem = new UserFeedbackInfoItem();
         giveFeedbackSectionItem.setType(UserFeedbackInfoItemType.SECTION);
+        giveFeedbackSectionItem.setTitle("Give them some feedback");
         items.add(0, giveFeedbackSectionItem);
         int recentlyGivenFeedbackIndex = -1;
         for (int i = 1; i < items.size(); i++) {
@@ -76,6 +80,7 @@ public class UsersListingPresenterImpl implements UsersListingPresenter {
             }
         }
         UserFeedbackInfoItem recentlyGivenFeedbackItem = new UserFeedbackInfoItem();
+        recentlyGivenFeedbackItem.setTitle("You gave them feedback recently");
         recentlyGivenFeedbackItem.setType(UserFeedbackInfoItemType.SECTION);
         if (recentlyGivenFeedbackIndex > -1) {
             items.add(recentlyGivenFeedbackIndex, recentlyGivenFeedbackItem);

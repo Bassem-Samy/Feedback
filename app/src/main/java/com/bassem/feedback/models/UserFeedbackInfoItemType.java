@@ -6,5 +6,14 @@ package com.bassem.feedback.models;
  */
 
 public enum UserFeedbackInfoItemType {
-    SECTION, RECORD, NOT_DETERMINED
+    SECTION(1), RECORD(2);
+    private final int value;
+
+    UserFeedbackInfoItemType(final int newValue) {
+        value = newValue;
+    }
+
+    public int getValue() {
+        return value;
+    }
 }
