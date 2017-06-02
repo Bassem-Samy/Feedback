@@ -11,11 +11,15 @@ import android.view.ViewGroup;
 import com.bassem.feedback.R;
 import com.bassem.feedback.models.UserFeedbackInfoItem;
 import com.bassem.feedback.models.datamodels.User;
+import com.bassem.feedback.ui.userslisting.di.DaggerUsersListingComponent;
+import com.bassem.feedback.ui.userslisting.di.UsersListingModule;
 import com.bassem.feedback.utils.Constants;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * A simple Fragment that displays list of users with their feedback statuses.
@@ -28,6 +32,8 @@ import java.util.List;
 public class UsersListingFragment extends Fragment implements UsersListingView {
     public static final String TAG = "users_listing_fragment";
     private OnFragmentInteractionListener mListener;
+    @Inject
+    UsersListingPresenterImpl presenter;
 
     public UsersListingFragment() {
         // Required empty public constructor
@@ -41,6 +47,8 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DaggerUsersListingComponent.builder().usersListingModule(new UsersListingModule(this, getContext())).build().inject(this);
+
     }
 
     @Override
@@ -53,8 +61,7 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Gson gson = new GsonBuilder().setDateFormat(Constants.INTERACTIONS_DATE_FORMAT).create();
-        UsersListingPresenterImpl presenter = new UsersListingPresenterImpl(this, new UsersListingInteractorImpl(getContext().getAssets(), gson));
+
         presenter.loadUsersFeedbackInfoItems(Constants.USERS_JSON_FILE_NAME);
     }
 
