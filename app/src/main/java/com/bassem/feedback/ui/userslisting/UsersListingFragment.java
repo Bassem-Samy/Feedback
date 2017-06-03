@@ -4,10 +4,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.view.menu.MenuAdapter;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -61,7 +63,7 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setHasOptionsMenu(true);
         DaggerUsersListingComponent.builder().usersListingModule(new UsersListingModule(this, getContext())).build().inject(this);
 
     }
@@ -158,7 +160,21 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
 
         @Override
         public void onFeedbackGiven() {
-            usersRecyclerView.scrollToPosition(usersListingAdapter.getItemCount()-1);
+            usersRecyclerView.scrollToPosition(usersListingAdapter.getItemCount() - 1);
         }
     };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.reset_menu_item: {
+                if (presenter != null) {
+                    presenter.loadUsersFeedbackInfoItems(Constants.USERS_JSON_FILE_NAME);
+                }
+                return true;
+
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

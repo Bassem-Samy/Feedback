@@ -19,6 +19,7 @@ import com.bassem.feedback.utils.ImageLoader;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import butterknife.OnClick;
  */
 
 public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
     List<UserFeedbackInfoItem> mDataset;
     OnFeedbackInfoItemClick mListener;
     Context mContext;
@@ -38,6 +40,7 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
     public UsersListingAdapter(List<UserFeedbackInfoItem> items, OnFeedbackInfoItemClick listener, Context context) {
+
         this.mDataset = items;
         this.mListener = listener;
         this.mContext = context;
@@ -170,6 +173,13 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 mListener.onUserClicked(position);
             }
         }
+    }
+
+    public UserFeedbackInfoItem getItemByPosition(int position) {
+        if (mDataset != null && mDataset.size() > position) {
+            return mDataset.get(position);
+        }
+        return null;
     }
 
     public interface OnFeedbackInfoItemClick {
