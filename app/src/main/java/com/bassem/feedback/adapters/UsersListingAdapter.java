@@ -7,11 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bassem.feedback.R;
 import com.bassem.feedback.models.UserFeedbackInfoItem;
 import com.bassem.feedback.models.UserFeedbackInfoItemType;
+import com.bassem.feedback.utils.Constants;
+import com.bassem.feedback.utils.DurationTextHelper;
 import com.bassem.feedback.utils.ImageLoader;
 
 import java.util.List;
@@ -28,11 +31,14 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     List<UserFeedbackInfoItem> mDataset;
     OnFeedbackInfoItemClick mListener;
     Context mContext;
+    DurationTextHelper mDurationTextHelper;
+
 
     public UsersListingAdapter(List<UserFeedbackInfoItem> items, OnFeedbackInfoItemClick listener, Context context) {
         this.mDataset = items;
         this.mListener = listener;
         this.mContext = context;
+        this.mDurationTextHelper = new DurationTextHelper(context);
     }
 
     @Override
@@ -60,6 +66,15 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 RecordViewHolder viewHolder = (RecordViewHolder) holder;
                 viewHolder.userNameTextView.setText(item.getName());
                 ImageLoader.loadImage(mContext, item.getAvatar(), R.drawable.user, ((RecordViewHolder) holder).userImageView);
+                if (item.getLastFeedbackTimeDifference() < Constants.LAST_INTERACTION_THRESHOLD) {
+                    viewHolder.giveFeedbackLinearLayout.setVisibility(View.GONE);
+                } else {
+                    viewHolder.giveFeedbackLinearLayout.setVisibility(View.VISIBLE);
+                }
+                if (item.getLastFeedbackSent() == null || item.getLastFeedbackSent().isEmpty()) {
+                    item.setLastFeedbackSent(mDurationTextHelper.getDurationTextResourceId(item.getLastFeedbackTimeDifference()));
+                }
+                viewHolder.timeDifferenceTextView.setText(item.getLastFeedbackSent());
                 break;
             }
             case SECTION: {
@@ -102,6 +117,8 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @BindView(R.id.txt_user_name)
         TextView userNameTextView;
 
+        @BindView(R.id.lnr_give_feedback)
+        LinearLayout giveFeedbackLinearLayout;
 
         public RecordViewHolder(View itemView) {
             super(itemView);
@@ -112,6 +129,12 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         void onGiveFeedbackClicked() {
             int position = this.getAdapterPosition();
             Log.e("FeedbackName", mDataset.get(position).getName());
+        }
+
+        @OnClick(R.id.lnr_user_info)
+        void onUserInfoClicked() {
+            int position = this.getAdapterPosition();
+            Log.e("userid", mDataset.get(position).getId());
         }
     }
 
