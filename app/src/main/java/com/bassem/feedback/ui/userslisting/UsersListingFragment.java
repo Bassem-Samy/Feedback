@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -38,6 +39,7 @@ import butterknife.ButterKnife;
  */
 public class UsersListingFragment extends Fragment implements UsersListingView {
     public static final String TAG = "users_listing_fragment";
+    private static final long RECYCLER_VIEW_ANIMATION_DURATION = 500;
     private OnFragmentInteractionListener mListener;
     @Inject
     UsersListingPresenterImpl presenter;
@@ -45,6 +47,7 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     RecyclerView usersRecyclerView;
     @BindView(R.id.prgrs_main)
     ProgressBar mainProgressBar;
+    UsersListingAdapter usersListingAdapter;
 
     public UsersListingFragment() {
         // Required empty public constructor
@@ -99,11 +102,13 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     @Override
     public void updateData(List<UserFeedbackInfoItem> items) {
 
-        UsersListingAdapter adapter = new UsersListingAdapter(items, null, getContext());
+        usersListingAdapter = new UsersListingAdapter(items, onFeedbackInfoItemClick, getContext());
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         usersRecyclerView.setLayoutManager(manager);
-        usersRecyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        usersRecyclerView.setItemAnimator(getRecyclerViewAnimator());
+        usersRecyclerView.setAdapter(usersListingAdapter);
+        usersListingAdapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -137,4 +142,23 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
         // on user clicked
         void onUserClicked();
     }
+
+    RecyclerView.ItemAnimator getRecyclerViewAnimator() {
+        RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
+        itemAnimator.setAddDuration(RECYCLER_VIEW_ANIMATION_DURATION);
+        itemAnimator.setRemoveDuration(RECYCLER_VIEW_ANIMATION_DURATION);
+        return itemAnimator;
+    }
+
+    UsersListingAdapter.OnFeedbackInfoItemClick onFeedbackInfoItemClick = new UsersListingAdapter.OnFeedbackInfoItemClick() {
+        @Override
+        public void onUserClicked(int position) {
+
+        }
+
+        @Override
+        public void onFeedbackGiven() {
+            usersRecyclerView.scrollToPosition(usersListingAdapter.getItemCount()-1);
+        }
+    };
 }

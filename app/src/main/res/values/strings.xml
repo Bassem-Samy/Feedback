@@ -15,4 +15,5 @@
     <string name="never">Never</string>
     <string name="weeks_ago">Weeks ago</string>
     <string name="week_ago">Week ago</string>
+    <string name="no_items_here">No items here</string>
 </resources>

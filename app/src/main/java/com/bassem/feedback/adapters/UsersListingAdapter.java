@@ -17,6 +17,9 @@ import com.bassem.feedback.utils.Constants;
 import com.bassem.feedback.utils.DurationTextHelper;
 import com.bassem.feedback.utils.ImageLoader;
 
+import org.w3c.dom.Text;
+
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -56,11 +59,11 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         UserFeedbackInfoItem item = mDataset.get(position);
         if (item != null) {
-            initializeViewHolders(item, holder);
+            initializeViewHolders(item, position, holder);
         }
     }
 
-    private void initializeViewHolders(UserFeedbackInfoItem item, RecyclerView.ViewHolder holder) {
+    private void initializeViewHolders(UserFeedbackInfoItem item, int position, RecyclerView.ViewHolder holder) {
         switch (item.getType()) {
             case RECORD: {
                 RecordViewHolder viewHolder = (RecordViewHolder) holder;
@@ -72,7 +75,6 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     viewHolder.giveFeedbackLinearLayout.setVisibility(View.VISIBLE);
                 }
                 if (item.getLastFeedbackSent() == null || item.getLastFeedbackSent().isEmpty()) {
-                    //   item.setLastFeedbackSent(mDurationTextHelper.getDurationTextResourceId(item.getLastFeedbackTimeDifference()));
                     item.setLastFeedbackSent(mDurationTextHelper.getDurationTextResourceId(item));
                 }
                 viewHolder.timeDifferenceTextView.setText(item.getLastFeedbackSent());
@@ -81,6 +83,17 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case SECTION: {
                 SectionViewHolder viewHolder = (SectionViewHolder) holder;
                 viewHolder.sectionTitleTextView.setText(item.getTitle());
+                viewHolder.noItemsHereTextView.setVisibility(View.GONE);
+                // checks if this section has no item then show empty message
+                if (position == getItemCount() - 1) {
+                    viewHolder.noItemsHereTextView.setVisibility(View.VISIBLE);
+                } else if (position == 0) {
+                    if (getItemCount() > 1) {
+                        if (mDataset.get(1).getType() == UserFeedbackInfoItemType.SECTION) {
+                            viewHolder.noItemsHereTextView.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
                 break;
             }
         }
@@ -100,9 +113,24 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mDataset.get(position).getType().getValue();
     }
 
+    void interactWithItem(int position) {
+        UserFeedbackInfoItem item = mDataset.get(position);
+        mDataset.remove(item);
+        notifyItemRemoved(position);
+        item.updateInteraction(new Date());
+        item.setLastFeedbackSent(mDurationTextHelper.getDurationTextResourceId(item));
+        mDataset.add(item);
+        notifyItemInserted(mDataset.size() - 1);
+        if (mListener != null) {
+            mListener.onFeedbackGiven();
+        }
+    }
+
     public class SectionViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.txt_section_title)
         TextView sectionTitleTextView;
+        @BindView(R.id.txt_no_items_here)
+        TextView noItemsHereTextView;
 
         public SectionViewHolder(View itemView) {
             super(itemView);
@@ -130,18 +158,23 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         void onGiveFeedbackClicked() {
             int position = this.getAdapterPosition();
             Log.e("FeedbackName", mDataset.get(position).getName());
+            interactWithItem(position);
+
         }
 
         @OnClick(R.id.lnr_user_info)
         void onUserInfoClicked() {
             int position = this.getAdapterPosition();
             Log.e("userid", mDataset.get(position).getId());
+            if (mListener != null) {
+                mListener.onUserClicked(position);
+            }
         }
     }
 
     public interface OnFeedbackInfoItemClick {
-        void onUserClicked();
+        void onUserClicked(int position);
 
-        void onInteractClicked();
+        void onFeedbackGiven();
     }
 }
