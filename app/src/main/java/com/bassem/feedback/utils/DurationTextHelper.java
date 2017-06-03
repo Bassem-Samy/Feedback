@@ -1,9 +1,11 @@
 package com.bassem.feedback.utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.bassem.feedback.R;
+import com.bassem.feedback.models.UserFeedbackInfoItem;
 
 import java.lang.ref.WeakReference;
 import java.text.DateFormat;
@@ -21,7 +23,7 @@ public class DurationTextHelper {
     private final static long TWO_HOURS_DIFFERENCE = 2L * 60L * 60L * 1000L;
     private final static long DAY_DIFFERENCE = 24L * 60L * 60L * 1000L;
     private final static long SEVEN_DAYS_DIFFERENCE = 7L * 24L * 60L * 60L * 1000L;
-    private final static long FOURTEEN_DAYS_DIFFERENCE=14L * 24L * 60L * 60L * 1000L;
+    private final static long FOURTEEN_DAYS_DIFFERENCE = 14L * 24L * 60L * 60L * 1000L;
     private final static long MONTH_DIFFERENCE = 30L * 24L * 60L * 60L * 1000L;
 
     private final static String StRING_FORMAT = "%d %s";
@@ -53,28 +55,22 @@ public class DurationTextHelper {
         neverText = context.getString(R.string.never);
     }
 
-    public String getDurationTextResourceId(long timeDifference) {
-
-        if (timeDifference < HOUR_DIFFERENCE) {
-            return justNowText;
-        } else if (timeDifference < TWO_HOURS_DIFFERENCE) {
-            long difference = Math.round(timeDifference / HOUR_DIFFERENCE);
-            return String.format(StRING_FORMAT, difference, difference <= 1 ? hourAgoText : hoursAgoText);
-        } else if (timeDifference < DAY_DIFFERENCE) {
-            long difference = Math.round(timeDifference / HOUR_DIFFERENCE);
-            return String.format(StRING_FORMAT, difference, hoursAgoText);
-        } else if (timeDifference < FOURTEEN_DAYS_DIFFERENCE) {
-            long difference = Math.round(timeDifference / DAY_DIFFERENCE);
-            return String.format(StRING_FORMAT, difference, difference <= 1 ? dayAgoText : daysAgoText);
-        } else if (timeDifference < MONTH_DIFFERENCE) {
-            long difference = Math.round(timeDifference / SEVEN_DAYS_DIFFERENCE);
-            return String.format(StRING_FORMAT, difference, difference <= 1 ? weekAgoText : weeksAgoText);
-        } else if (timeDifference < Long.MAX_VALUE) {
-            long difference = Math.round(timeDifference / MONTH_DIFFERENCE);
-            return String.format(StRING_FORMAT, difference, difference <= 1 ? monthAgoText : monthsAgoText);
-        } else {
+    public String getDurationTextResourceId(UserFeedbackInfoItem item) {
+        if (item.getHoursDifference() == -1 && item.getDaysDifference() == -1 && item.getMonthsDifference() == -1) {
             return neverText;
         }
+        if (item.getMonthsDifference() >= 1) {
+            return String.format(StRING_FORMAT, item.getMonthsDifference(), item.getMonthsDifference() == 1 ? monthAgoText : monthsAgoText);
+        } else if (item.getWeekDifference() >= 2) {
+            return String.format(StRING_FORMAT, item.getWeekDifference(), item.getWeekDifference() == 1 ? weekAgoText : weeksAgoText);
+        } else if (item.getDaysDifference() >= 1) {
+            return String.format(StRING_FORMAT, item.getDaysDifference(), item.getDaysDifference() == 1 ? dayAgoText : daysAgoText);
+        } else if (item.getHoursDifference() >= 1) {
+            return String.format(StRING_FORMAT, item.getHoursDifference(), item.getHoursDifference() == 1 ? hourAgoText : hoursAgoText);
+        } else if (item.getHoursDifference() == 0) {
+            return justNowText;
+        }
+        return neverText;
 
     }
 

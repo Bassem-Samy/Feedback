@@ -72,7 +72,8 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     viewHolder.giveFeedbackLinearLayout.setVisibility(View.VISIBLE);
                 }
                 if (item.getLastFeedbackSent() == null || item.getLastFeedbackSent().isEmpty()) {
-                    item.setLastFeedbackSent(mDurationTextHelper.getDurationTextResourceId(item.getLastFeedbackTimeDifference()));
+                    //   item.setLastFeedbackSent(mDurationTextHelper.getDurationTextResourceId(item.getLastFeedbackTimeDifference()));
+                    item.setLastFeedbackSent(mDurationTextHelper.getDurationTextResourceId(item));
                 }
                 viewHolder.timeDifferenceTextView.setText(item.getLastFeedbackSent());
                 break;
