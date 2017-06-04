@@ -118,6 +118,7 @@ public class UserDetailsFragment extends Fragment {
                                                                                          startCircularReveal();
                                                                                      } else {
                                                                                          userInfoLinearLayout.setVisibility(View.VISIBLE);
+                                                                                         feedbackGivenLinearLayout.setVisibility(View.VISIBLE);
                                                                                      }
                                                                                  }
                                                                              }
@@ -185,6 +186,9 @@ public class UserDetailsFragment extends Fragment {
                 }
             });
             circularReveal.start();
+        }else{
+            feedbackGivenLinearLayout.setVisibility(View.VISIBLE);
+
         }
     }
 
