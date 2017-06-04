@@ -4,12 +4,14 @@ import android.content.Context;
 
 import com.bassem.feedback.R;
 import com.bassem.feedback.models.LastInteractionInfoItem;
+import com.bassem.feedback.models.LastInteractionSeverityType;
 
 import org.joda.time.DateTime;
 
 import java.lang.ref.WeakReference;
 
 /**
+ * Helper class that calculates readable text for last interactions
  * Created by Bassem Samy on 6/3/2017.
  */
 
@@ -51,59 +53,38 @@ public class DurationTextHelper {
         neverText = context.getString(R.string.never);
     }
 
-  /*  public String getLatestInteractionDuration(UserFeedbackInfoItem item) {
-
-        if (item.getHoursDifference() == -1 && item.getDaysDifference() == -1 && item.getMonthsDifference() == -1) {
-            return neverText;
-        }
-        if (item.getMonthsDifference() >= 1) {
-            return String.format(StRING_FORMAT, item.getMonthsDifference(), item.getMonthsDifference() == 1 ? monthAgoText : monthsAgoText);
-        } else if (item.getWeekDifference() >= 2) {
-            return String.format(StRING_FORMAT, item.getWeekDifference(), item.getWeekDifference() == 1 ? weekAgoText : weeksAgoText);
-        } else if (item.getDaysDifference() >= 1) {
-            return String.format(StRING_FORMAT, item.getDaysDifference(), item.getDaysDifference() == 1 ? dayAgoText : daysAgoText);
-        } else if (item.getHoursDifference() >= 1) {
-            return String.format(StRING_FORMAT, item.getHoursDifference(), item.getHoursDifference() == 1 ? hourAgoText : hoursAgoText);
-        } else if (item.getHoursDifference() == 0) {
-            return justNowText;
-        }
-        return neverText;
-
-        return getDurationText(item.getHoursDifference(), item.getDaysDifference(), item.getWeekDifference(),item.getMonthsDifference());
-
-    }*/
-
+    /**
+     * Checks last interaction timings and returns the relevant text for it
+     *
+     * @param lastInteraction item
+     * @return readable text for last interaction time
+     */
     public String getLastInteractionDuration(LastInteractionInfoItem lastInteraction) {
         if (lastInteraction == null) {
             return neverText;
         }
-        DateTime now = new DateTime();
-       /* DateTime lastInteractionDateTime = new DateTime(lastInteraction.getDate().getTime());
-        return getDurationText(Hours.hoursBetween(lastInteractionDateTime, now).getHours(),
-                Days.daysBetween(lastInteractionDateTime, now).getDays(),
-                Weeks.weeksBetween(lastInteractionDateTime, now).getWeeks(),
-                Months.monthsBetween(lastInteractionDateTime, now).getMonths());*/
 
-        return getDurationText(lastInteraction.getHoursDifference(), lastInteraction.getDaysDifference(), lastInteraction.getWeekDifference(), lastInteraction.getMonthsDifference());
-    }
-
-    private String getDurationText(int hoursDifference, int daysDifference, int weeksDifference, int monthsDifference) {
-
-        if (hoursDifference == -1 && weeksDifference == -1 && daysDifference == -1 && monthsDifference == -1) {
+        if (lastInteraction.getHoursDifference() == -1 && lastInteraction.getWeekDifference() == -1 && lastInteraction.getDaysDifference() == -1 && lastInteraction.getMonthsDifference() == -1) {
             return neverText;
         }
 
-        if (monthsDifference >= 1) {
-            return String.format(StRING_FORMAT, monthsDifference, monthsDifference == 1 ? monthAgoText : monthsAgoText);
-        } else if (weeksDifference >= 2) {
-            return String.format(StRING_FORMAT, weeksDifference, weeksDifference == 1 ? weekAgoText : weeksAgoText);
-        } else if (daysDifference >= 1) {
-            return String.format(StRING_FORMAT, daysDifference, daysDifference == 1 ? dayAgoText : daysAgoText);
-        } else if (hoursDifference >= 1) {
-            return String.format(StRING_FORMAT, hoursDifference, hoursDifference == 1 ? hourAgoText : hoursAgoText);
-        } else if (hoursDifference == 0) {
+        if (lastInteraction.getMonthsDifference() >= 1) {
+            lastInteraction.setSeverityType(LastInteractionSeverityType.SEVER);
+            return String.format(StRING_FORMAT, lastInteraction.getMonthsDifference(), lastInteraction.getMonthsDifference() == 1 ? monthAgoText : monthsAgoText);
+        } else if (lastInteraction.getWeekDifference() >= 2) {
+            lastInteraction.setSeverityType(LastInteractionSeverityType.MEDIUM);
+            return String.format(StRING_FORMAT, lastInteraction.getWeekDifference(), lastInteraction.getWeekDifference() == 1 ? weekAgoText : weeksAgoText);
+        } else if (lastInteraction.getDaysDifference() >= 1) {
+            lastInteraction.setSeverityType(LastInteractionSeverityType.NORMAL);
+            return String.format(StRING_FORMAT, lastInteraction.getDaysDifference(), lastInteraction.getDaysDifference() == 1 ? dayAgoText : daysAgoText);
+        } else if (lastInteraction.getHoursDifference() >= 1) {
+            lastInteraction.setSeverityType(LastInteractionSeverityType.NORMAL);
+            return String.format(StRING_FORMAT, lastInteraction.getHoursDifference(), lastInteraction.getHoursDifference() == 1 ? hourAgoText : hoursAgoText);
+        } else if (lastInteraction.getHoursDifference() == 0) {
+            lastInteraction.setSeverityType(LastInteractionSeverityType.NORMAL);
             return justNowText;
         }
         return neverText;
     }
+
 }

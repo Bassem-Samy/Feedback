@@ -1,6 +1,8 @@
 package com.bassem.feedback.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+
 /**
  * Created by Bassem Samy on 6/2/2017.
  */
@@ -36,6 +39,9 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     Context mContext;
     DurationTextHelper mDurationTextHelper;
     static final String TRANSITION_NAME = "transition_";
+    int severColor;
+    int mediumSeverityColor;
+    int normalSeverityColor;
 
     public UsersListingAdapter(List<UserFeedbackInfoItem> items, OnFeedbackInfoItemClick listener, Context context) {
 
@@ -43,6 +49,9 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.mListener = listener;
         this.mContext = context;
         this.mDurationTextHelper = new DurationTextHelper(context);
+        severColor = ContextCompat.getColor(context, Constants.SEVER_COLOR_RESOURCE_ID);
+        mediumSeverityColor = ContextCompat.getColor(context, Constants.MEDIUM_SEVERITY_COLOR_RESOURCE_ID);
+        normalSeverityColor = ContextCompat.getColor(context, Constants.NORMAL_SEVERITY_COLOR_RESOURCE_ID);
     }
 
     @Override
@@ -79,6 +88,20 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 if (item.getLastFeedbackSent() == null || item.getLastFeedbackSent().isEmpty())
                     item.setLastFeedbackSent(mDurationTextHelper.getLastInteractionDuration(item.getlastInteractionItem()));
                 viewHolder.timeDifferenceTextView.setText(item.getLastFeedbackSent());
+                viewHolder.timeDifferenceTextView.setTextColor(severColor);
+                if (item.getlastInteractionItem() != null) {
+                    switch (item.getlastInteractionItem().getSeverityType()) {
+                        case MEDIUM: {
+                            viewHolder.timeDifferenceTextView.setTextColor(mediumSeverityColor);
+                            break;
+                        }
+                        case NORMAL: {
+                            viewHolder.timeDifferenceTextView.setTextColor(normalSeverityColor);
+                            break;
+                        }
+                    }
+                }
+
                 break;
             }
             case SECTION: {
@@ -128,7 +151,7 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void setItems(List<UserFeedbackInfoItem> items) {
-        mDataset=items;
+        mDataset = items;
     }
 
     public class SectionViewHolder extends RecyclerView.ViewHolder {
@@ -189,7 +212,8 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         void onFeedbackGiven(UserFeedbackInfoItem item);
     }
-    public ArrayList<UserFeedbackInfoItem> getDataset(){
+
+    public ArrayList<UserFeedbackInfoItem> getDataset() {
         return new ArrayList<>(mDataset);
     }
 }

@@ -129,6 +129,7 @@ public class UserDetailsFragment extends Fragment {
         mAdapter = new UserInteractionsListingAdapter(mUser.getLastInteractions(), getContext());
         interactionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         interactionsRecyclerView.setAdapter(mAdapter);
+
     }
 
     private void populateData() {

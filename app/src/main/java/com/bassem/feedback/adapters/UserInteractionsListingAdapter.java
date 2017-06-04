@@ -1,6 +1,7 @@
 package com.bassem.feedback.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import com.bassem.feedback.R;
 import com.bassem.feedback.models.LastInteractionInfoItem;
+import com.bassem.feedback.utils.Constants;
 import com.bassem.feedback.utils.DurationTextHelper;
 
 import org.joda.time.DateTime;
@@ -26,10 +28,17 @@ public class UserInteractionsListingAdapter extends RecyclerView.Adapter<UserInt
 
     private List<LastInteractionInfoItem> mDataset;
     private DurationTextHelper mDurationTextHelper;
+    int severColor;
+    int mediumSeverityColor;
+    int normalSeverityColor;
 
     public UserInteractionsListingAdapter(List<LastInteractionInfoItem> items, Context context) {
         this.mDataset = items;
         mDurationTextHelper = new DurationTextHelper(context);
+        severColor = ContextCompat.getColor(context, Constants.SEVER_COLOR_RESOURCE_ID);
+        mediumSeverityColor = ContextCompat.getColor(context, Constants.MEDIUM_SEVERITY_COLOR_RESOURCE_ID);
+        normalSeverityColor = ContextCompat.getColor(context, Constants.NORMAL_SEVERITY_COLOR_RESOURCE_ID);
+
     }
 
     @Override
@@ -44,6 +53,20 @@ public class UserInteractionsListingAdapter extends RecyclerView.Adapter<UserInt
             mDataset.get(position).prepareTimeDifference(new DateTime());
         }
         holder.feedbackSentTextView.setText(mDurationTextHelper.getLastInteractionDuration(mDataset.get(position)));
+        switch (mDataset.get(position).getSeverityType()) {
+            case MEDIUM: {
+                holder.feedbackSentTextView.setTextColor(mediumSeverityColor);
+                break;
+            }
+            case NORMAL: {
+                holder.feedbackSentTextView.setTextColor(normalSeverityColor);
+                break;
+            }
+            case SEVER: {
+                holder.feedbackSentTextView.setTextColor(severColor);
+                break;
+            }
+        }
     }
 
     @Override

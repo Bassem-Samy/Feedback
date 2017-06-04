@@ -5,4 +5,8 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorGreyBackground">#EDEDED</color>
+    <color name="sever_color">#E2574C</color>
+    <color name="medium_severity_color">#FBD348</color>
+    <color name="normal_severity_color">#7FB546</color>
+    <color name="colorSeparator">#D3D3D3</color>
 </resources>

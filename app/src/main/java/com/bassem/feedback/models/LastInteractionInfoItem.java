@@ -20,6 +20,7 @@ public class LastInteractionInfoItem extends LastInteraction implements Parcelab
     private int monthsDifference = -1;
     private int daysDifference = -1;
     private int weekDifference = -1;
+    private LastInteractionSeverityType severityType = LastInteractionSeverityType.SEVER;
 
     public boolean isPrepared() {
         return isPrepared;
@@ -42,6 +43,7 @@ public class LastInteractionInfoItem extends LastInteraction implements Parcelab
         daysDifference = in.readInt();
         weekDifference = in.readInt();
         isPrepared = in.readByte() != 0;
+        severityType = (LastInteractionSeverityType) in.readSerializable();
     }
 
     public static final Creator<LastInteractionInfoItem> CREATOR = new Creator<LastInteractionInfoItem>() {
@@ -109,5 +111,14 @@ public class LastInteractionInfoItem extends LastInteraction implements Parcelab
         parcel.writeInt(daysDifference);
         parcel.writeInt(weekDifference);
         parcel.writeByte((byte) (isPrepared ? 1 : 0));
+        parcel.writeSerializable(severityType);
+    }
+
+    public LastInteractionSeverityType getSeverityType() {
+        return severityType;
+    }
+
+    public void setSeverityType(LastInteractionSeverityType severityType) {
+        this.severityType = severityType;
     }
 }

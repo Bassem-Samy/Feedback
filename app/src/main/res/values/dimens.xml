@@ -11,5 +11,6 @@
     <dimen name="user_details_image_item_width">100dp</dimen>
     <dimen name="user_details_name_textSize">18dp</dimen>
     <dimen name="padding5">5dp</dimen>
+    <dimen name="interaction_item_separator_height">2dp</dimen>
 
 </resources>
