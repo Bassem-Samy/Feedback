@@ -3,6 +3,7 @@ package com.bassem.feedback.models.datamodels;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bassem.feedback.models.LastInteractionInfoItem;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class User implements Parcelable {
     @SerializedName("name")
     private String name;
     @SerializedName("last_interactions")
-    private List<LastInteraction> lastInteractions;
+    private List<LastInteractionInfoItem> lastInteractions;
     @SerializedName("avatar")
     private String avatar;
 
@@ -30,7 +31,7 @@ public class User implements Parcelable {
         id = in.readString();
         email = in.readString();
         name = in.readString();
-        lastInteractions = in.createTypedArrayList(LastInteraction.CREATOR);
+        lastInteractions = in.createTypedArrayList(LastInteractionInfoItem.CREATOR);
         avatar = in.readString();
     }
 
@@ -70,11 +71,11 @@ public class User implements Parcelable {
         this.name = name;
     }
 
-    public List<LastInteraction> getLastInteractions() {
+    public List<LastInteractionInfoItem> getLastInteractions() {
         return lastInteractions;
     }
 
-    public void setLastInteractions(List<LastInteraction> lastInteractions) {
+    public void setLastInteractions(List<LastInteractionInfoItem> lastInteractions) {
         this.lastInteractions = lastInteractions;
     }
 

@@ -7,10 +7,6 @@ import com.bassem.feedback.models.datamodels.LastInteraction;
 import com.bassem.feedback.models.datamodels.User;
 
 import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.Hours;
-import org.joda.time.Months;
-import org.joda.time.Weeks;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,10 +22,7 @@ public class UserFeedbackInfoItem extends User implements Comparable<UserFeedbac
     private UserFeedbackInfoItemType type = UserFeedbackInfoItemType.RECORD;
     private String lastFeedbackSent;
     private long lastFeedbackTimeDifference;
-    private int hoursDifference = -1;
-    private int monthsDifference = -1;
-    private int daysDifference = -1;
-    private int weekDifference = -1;
+
 
     public UserFeedbackInfoItem() {
         super();
@@ -76,29 +69,6 @@ public class UserFeedbackInfoItem extends User implements Comparable<UserFeedbac
         this.lastFeedbackSent = lastFeedbackSent;
     }
 
-    public int getHoursDifference() {
-        return hoursDifference;
-    }
-
-    public void setHoursDifference(int hoursDifference) {
-        this.hoursDifference = hoursDifference;
-    }
-
-    public int getMonthsDifference() {
-        return monthsDifference;
-    }
-
-    public void setMonthsDifference(int monthsDifference) {
-        this.monthsDifference = monthsDifference;
-    }
-
-    public int getDaysDifference() {
-        return daysDifference;
-    }
-
-    public void setDaysDifference(int daysDifference) {
-        this.daysDifference = daysDifference;
-    }
 
     public long getLastFeedbackTimeDifference() {
         // if not calculated yet;
@@ -121,11 +91,8 @@ public class UserFeedbackInfoItem extends User implements Comparable<UserFeedbac
         if (getLastInteractions() != null && getLastInteractions().size() > 0 && getLastInteractions().get(0).getDate() != null) {
 
             DateTime now = new DateTime();
+            getLastInteractions().get(0).prepareTimeDifference(now);
             DateTime lastInteraction = new DateTime(getLastInteractions().get(0).getDate().getTime());
-            setHoursDifference(Hours.hoursBetween(lastInteraction, now).getHours());
-            setDaysDifference(Days.daysBetween(lastInteraction, now).getDays());
-            setMonthsDifference(Months.monthsBetween(lastInteraction, now).getMonths());
-            setWeekDifference(Weeks.weeksBetween(lastInteraction, now).getWeeks());
             setLastFeedbackTimeDifference(now.getMillis() - lastInteraction.getMillis());
 
         } else {
@@ -134,23 +101,22 @@ public class UserFeedbackInfoItem extends User implements Comparable<UserFeedbac
     }
 
 
-    public int getWeekDifference() {
-        return weekDifference;
-    }
-
-    public void setWeekDifference(int weekDifference) {
-        this.weekDifference = weekDifference;
-    }
-
     public void updateInteraction(Date date) {
         if (this.getLastInteractions() == null) {
             ArrayList<LastInteraction> interactions = new ArrayList<>();
         }
-        LastInteraction interaction = new LastInteraction();
+        LastInteractionInfoItem interaction = new LastInteractionInfoItem();
         interaction.setId(this.getLastInteractions().size() + 1);
         interaction.setDate(date);
         this.getLastInteractions().add(0, interaction);
         calculateLastFeedbackTimeDifference();
 
+    }
+
+    public LastInteractionInfoItem getlastInteractionItem() {
+        if (getLastInteractions() != null && getLastInteractions().size() > 0) {
+            return getLastInteractions().get(0);
+        }
+        return null;
     }
 }

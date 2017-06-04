@@ -158,6 +158,9 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     public void onDestroy() {
         super.onDestroy();
         // call presenter onDestroy();
+        if(presenter!=null){
+            presenter.onDestroy();
+        }
     }
 
     /**

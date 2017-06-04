@@ -1,20 +1,15 @@
 package com.bassem.feedback.ui;
 
-import android.os.Build;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.transition.Fade;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.bassem.feedback.R;
 import com.bassem.feedback.models.UserFeedbackInfoItem;
 import com.bassem.feedback.ui.userdetails.UserDetailsFragment;
 import com.bassem.feedback.ui.userslisting.UsersListingFragment;
-import com.bassem.feedback.utils.DetailsTransition;
 
 public class MainActivity extends AppCompatActivity implements UsersListingFragment.OnFragmentInteractionListener {
     Menu menu;

@@ -76,9 +76,8 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 } else {
                     viewHolder.giveFeedbackLinearLayout.setVisibility(View.VISIBLE);
                 }
-                if (item.getLastFeedbackSent() == null || item.getLastFeedbackSent().isEmpty()) {
-                    item.setLastFeedbackSent(mDurationTextHelper.getDurationTextResourceId(item));
-                }
+                if (item.getLastFeedbackSent() == null || item.getLastFeedbackSent().isEmpty())
+                    item.setLastFeedbackSent(mDurationTextHelper.getLastInteractionDuration(item.getlastInteractionItem()));
                 viewHolder.timeDifferenceTextView.setText(item.getLastFeedbackSent());
                 break;
             }
@@ -120,7 +119,7 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mDataset.remove(item);
         notifyItemRemoved(position);
         item.updateInteraction(new Date());
-        item.setLastFeedbackSent(mDurationTextHelper.getDurationTextResourceId(item));
+        item.setLastFeedbackSent(mDurationTextHelper.getLastInteractionDuration(item.getlastInteractionItem()));
         mDataset.add(item);
         notifyItemInserted(mDataset.size() - 1);
         if (mListener != null) {

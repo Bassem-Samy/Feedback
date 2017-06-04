@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.style.UpdateLayout;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
@@ -21,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bassem.feedback.R;
+import com.bassem.feedback.adapters.UserInteractionsListingAdapter;
 import com.bassem.feedback.models.UserFeedbackInfoItem;
 import com.bassem.feedback.models.datamodels.User;
 import com.bassem.feedback.utils.ImageLoader;
@@ -54,6 +57,11 @@ public class UserDetailsFragment extends Fragment {
     LinearLayout feedbackGivenLinearLayout;
     @BindView(R.id.txt_to_user_name)
     TextView toUserNameTextView;
+    @BindView(R.id.rclr_interactions)
+    RecyclerView interactionsRecyclerView;
+    @BindView(R.id.txt_no_interactions)
+    TextView noInteractionsTextView;
+    UserInteractionsListingAdapter mAdapter;
 
     public UserDetailsFragment() {
         // Required empty public constructor
@@ -100,6 +108,7 @@ public class UserDetailsFragment extends Fragment {
                 mUser = savedInstanceState.getParcelable(ARG_USER);
             }
         }
+        initializeRecyclerViewData();
         populateData();
         userInfoLinearLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                                                                                  @Override
@@ -115,13 +124,30 @@ public class UserDetailsFragment extends Fragment {
         );
     }
 
+    void initializeRecyclerViewData() {
+
+        mAdapter = new UserInteractionsListingAdapter(mUser.getLastInteractions(), getContext());
+        interactionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        interactionsRecyclerView.setAdapter(mAdapter);
+    }
+
     private void populateData() {
         ImageLoader.loadImage(getContext(), mUser.getAvatar(), R.drawable.user, userImageView);
         userNameTextView.setText(mUser.getName());
         toUserNameTextView.setText(mUser.getName());
+        mAdapter.setDataset(mUser.getLastInteractions());
+        mAdapter.notifyDataSetChanged();
+        if (mUser.getLastInteractions() == null || mUser.getLastInteractions().size() == 0) {
+            noInteractionsTextView.setVisibility(View.VISIBLE);
+        } else {
+            noInteractionsTextView.setVisibility(View.GONE);
+        }
 
     }
 
+    /**
+     * Start a circular reveal animation for user info linear layout and after finishing the animation, another circular starts for last interactions
+     */
     void startCircularReveal() {
         userInfoLinearLayout.setVisibility(View.VISIBLE);
         Animator circularReveal = null;
@@ -179,6 +205,7 @@ public class UserDetailsFragment extends Fragment {
 
     public void updateUserToDisplay(UserFeedbackInfoItem item) {
         this.mUser = item;
+        feedbackGivenLinearLayout.setVisibility(View.INVISIBLE);
         populateData();
         startCircularReveal();
     }

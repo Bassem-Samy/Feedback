@@ -1,17 +1,13 @@
 package com.bassem.feedback.utils;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.TextView;
 
 import com.bassem.feedback.R;
-import com.bassem.feedback.models.UserFeedbackInfoItem;
+import com.bassem.feedback.models.LastInteractionInfoItem;
+
+import org.joda.time.DateTime;
 
 import java.lang.ref.WeakReference;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.RecursiveTask;
 
 /**
  * Created by Bassem Samy on 6/3/2017.
@@ -55,7 +51,8 @@ public class DurationTextHelper {
         neverText = context.getString(R.string.never);
     }
 
-    public String getDurationTextResourceId(UserFeedbackInfoItem item) {
+  /*  public String getLatestInteractionDuration(UserFeedbackInfoItem item) {
+
         if (item.getHoursDifference() == -1 && item.getDaysDifference() == -1 && item.getMonthsDifference() == -1) {
             return neverText;
         }
@@ -72,6 +69,41 @@ public class DurationTextHelper {
         }
         return neverText;
 
+        return getDurationText(item.getHoursDifference(), item.getDaysDifference(), item.getWeekDifference(),item.getMonthsDifference());
+
+    }*/
+
+    public String getLastInteractionDuration(LastInteractionInfoItem lastInteraction) {
+        if (lastInteraction == null) {
+            return neverText;
+        }
+        DateTime now = new DateTime();
+       /* DateTime lastInteractionDateTime = new DateTime(lastInteraction.getDate().getTime());
+        return getDurationText(Hours.hoursBetween(lastInteractionDateTime, now).getHours(),
+                Days.daysBetween(lastInteractionDateTime, now).getDays(),
+                Weeks.weeksBetween(lastInteractionDateTime, now).getWeeks(),
+                Months.monthsBetween(lastInteractionDateTime, now).getMonths());*/
+
+        return getDurationText(lastInteraction.getHoursDifference(), lastInteraction.getDaysDifference(), lastInteraction.getWeekDifference(), lastInteraction.getMonthsDifference());
     }
 
+    private String getDurationText(int hoursDifference, int daysDifference, int weeksDifference, int monthsDifference) {
+
+        if (hoursDifference == -1 && weeksDifference == -1 && daysDifference == -1 && monthsDifference == -1) {
+            return neverText;
+        }
+
+        if (monthsDifference >= 1) {
+            return String.format(StRING_FORMAT, monthsDifference, monthsDifference == 1 ? monthAgoText : monthsAgoText);
+        } else if (weeksDifference >= 2) {
+            return String.format(StRING_FORMAT, weeksDifference, weeksDifference == 1 ? weekAgoText : weeksAgoText);
+        } else if (daysDifference >= 1) {
+            return String.format(StRING_FORMAT, daysDifference, daysDifference == 1 ? dayAgoText : daysAgoText);
+        } else if (hoursDifference >= 1) {
+            return String.format(StRING_FORMAT, hoursDifference, hoursDifference == 1 ? hourAgoText : hoursAgoText);
+        } else if (hoursDifference == 0) {
+            return justNowText;
+        }
+        return neverText;
+    }
 }
