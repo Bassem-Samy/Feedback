@@ -7,4 +7,9 @@
     <dimen name="user_image_item_width">75dp</dimen>
     <dimen name="user_image_item_height">75dp</dimen>
     <dimen name="margin5">5dp</dimen>
+    <dimen name="user_details_image_item_height">100dp</dimen>
+    <dimen name="user_details_image_item_width">100dp</dimen>
+    <dimen name="user_details_name_textSize">18dp</dimen>
+    <dimen name="padding5">5dp</dimen>
+
 </resources>

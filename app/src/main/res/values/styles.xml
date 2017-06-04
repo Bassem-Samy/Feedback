@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="UserDetailsNameTextStyle">
+        <item name="android:textSize">@dimen/user_details_name_textSize</item>
+    </style>
+
 </resources>

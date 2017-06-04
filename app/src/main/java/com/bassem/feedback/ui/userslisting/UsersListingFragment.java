@@ -2,6 +2,7 @@ package com.bassem.feedback.ui.userslisting;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.view.menu.MenuAdapter;
@@ -42,6 +43,8 @@ import butterknife.ButterKnife;
 public class UsersListingFragment extends Fragment implements UsersListingView {
     public static final String TAG = "users_listing_fragment";
     private static final long RECYCLER_VIEW_ANIMATION_DURATION = 500;
+    private static final String SAVED_USERS_LIST = "saved_users_list";
+    private static final String SAVED_LAYOUT_MANAGER_STATE = "saved_layout_manager_state";
     private OnFragmentInteractionListener mListener;
     @Inject
     UsersListingPresenterImpl presenter;
@@ -50,6 +53,8 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     @BindView(R.id.prgrs_main)
     ProgressBar mainProgressBar;
     UsersListingAdapter usersListingAdapter;
+    Parcelable layoutManagerSavedState;
+    LinearLayoutManager mLinearLayoutManager;
 
     public UsersListingFragment() {
         // Required empty public constructor
@@ -80,8 +85,21 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        List<UserFeedbackInfoItem> savedItems = null;
+        // check for saved instance data
+        if (savedInstanceState != null) {
+            savedItems = savedInstanceState.getParcelableArrayList(SAVED_USERS_LIST);
+            layoutManagerSavedState = savedInstanceState.getParcelable(SAVED_LAYOUT_MANAGER_STATE);
+        }
+        if (savedItems != null && savedItems.size() > 0) {
+            updateData(savedItems);
 
-        presenter.loadUsersFeedbackInfoItems(Constants.USERS_JSON_FILE_NAME);
+
+        } else {
+            presenter.loadUsersFeedbackInfoItems(Constants.USERS_JSON_FILE_NAME);
+        }
+
+
     }
 
     @Override
@@ -103,12 +121,20 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
 
     @Override
     public void updateData(List<UserFeedbackInfoItem> items) {
-
-        usersListingAdapter = new UsersListingAdapter(items, onFeedbackInfoItemClick, getContext());
-        LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        usersRecyclerView.setLayoutManager(manager);
+        if (usersListingAdapter == null) {
+            usersListingAdapter = new UsersListingAdapter(items, onFeedbackInfoItemClick, getContext());
+            usersRecyclerView.setAdapter(usersListingAdapter);
+        } else {
+            usersListingAdapter.setItems(items);
+        }
+        if (mLinearLayoutManager == null) {
+            mLinearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+            usersRecyclerView.setLayoutManager(mLinearLayoutManager);
+        }
+        if (layoutManagerSavedState != null) {
+            usersRecyclerView.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
+        }
         usersRecyclerView.setItemAnimator(getRecyclerViewAnimator());
-        usersRecyclerView.setAdapter(usersListingAdapter);
         usersListingAdapter.notifyDataSetChanged();
 
     }
@@ -142,7 +168,8 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
      */
     public interface OnFragmentInteractionListener {
         // on user clicked
-        void onUserClicked();
+        void onUserClicked(UserFeedbackInfoItem item);
+        void onFeedbackGiven(UserFeedbackInfoItem item);
     }
 
     RecyclerView.ItemAnimator getRecyclerViewAnimator() {
@@ -155,12 +182,16 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
     UsersListingAdapter.OnFeedbackInfoItemClick onFeedbackInfoItemClick = new UsersListingAdapter.OnFeedbackInfoItemClick() {
         @Override
         public void onUserClicked(int position) {
+            if (mListener != null) {
 
+                mListener.onUserClicked(usersListingAdapter.getItemByPosition(position));
+            }
         }
 
         @Override
-        public void onFeedbackGiven() {
+        public void onFeedbackGiven(UserFeedbackInfoItem item) {
             usersRecyclerView.scrollToPosition(usersListingAdapter.getItemCount() - 1);
+            mListener.onFeedbackGiven(item);
         }
     };
 
@@ -176,5 +207,20 @@ public class UsersListingFragment extends Fragment implements UsersListingView {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        super.onSaveInstanceState(outState);
+        if (usersListingAdapter != null) {
+            if (usersListingAdapter.getDataset() != null && usersListingAdapter.getDataset().size() > 0) {
+                outState.putParcelableArrayList(SAVED_USERS_LIST, usersListingAdapter.getDataset());
+            }
+        }
+        if (usersRecyclerView != null && usersRecyclerView.getLayoutManager() != null) {
+            outState.putParcelable(SAVED_LAYOUT_MANAGER_STATE, usersRecyclerView.getLayoutManager().onSaveInstanceState());
+        }
     }
 }

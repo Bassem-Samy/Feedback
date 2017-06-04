@@ -17,8 +17,6 @@ import com.bassem.feedback.utils.Constants;
 import com.bassem.feedback.utils.DurationTextHelper;
 import com.bassem.feedback.utils.ImageLoader;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +35,7 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     OnFeedbackInfoItemClick mListener;
     Context mContext;
     DurationTextHelper mDurationTextHelper;
-
+    static final String TRANSITION_NAME = "transition_";
 
     public UsersListingAdapter(List<UserFeedbackInfoItem> items, OnFeedbackInfoItemClick listener, Context context) {
 
@@ -72,6 +70,7 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 RecordViewHolder viewHolder = (RecordViewHolder) holder;
                 viewHolder.userNameTextView.setText(item.getName());
                 ImageLoader.loadImage(mContext, item.getAvatar(), R.drawable.user, ((RecordViewHolder) holder).userImageView);
+
                 if (item.getLastFeedbackTimeDifference() < Constants.LAST_INTERACTION_THRESHOLD) {
                     viewHolder.giveFeedbackLinearLayout.setVisibility(View.GONE);
                 } else {
@@ -125,8 +124,12 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mDataset.add(item);
         notifyItemInserted(mDataset.size() - 1);
         if (mListener != null) {
-            mListener.onFeedbackGiven();
+            mListener.onFeedbackGiven(item);
         }
+    }
+
+    public void setItems(List<UserFeedbackInfoItem> items) {
+        mDataset=items;
     }
 
     public class SectionViewHolder extends RecyclerView.ViewHolder {
@@ -185,6 +188,9 @@ public class UsersListingAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public interface OnFeedbackInfoItemClick {
         void onUserClicked(int position);
 
-        void onFeedbackGiven();
+        void onFeedbackGiven(UserFeedbackInfoItem item);
+    }
+    public ArrayList<UserFeedbackInfoItem> getDataset(){
+        return new ArrayList<>(mDataset);
     }
 }

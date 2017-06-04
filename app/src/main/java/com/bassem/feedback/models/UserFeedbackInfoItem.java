@@ -1,5 +1,8 @@
 package com.bassem.feedback.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.bassem.feedback.models.datamodels.LastInteraction;
 import com.bassem.feedback.models.datamodels.User;
 
@@ -17,7 +20,7 @@ import java.util.Date;
  * A model that extends User class, it contains extra properties and methods required for the business logic
  */
 
-public class UserFeedbackInfoItem extends User implements Comparable<UserFeedbackInfoItem> {
+public class UserFeedbackInfoItem extends User implements Comparable<UserFeedbackInfoItem>, Parcelable {
 
     private String title;
     private UserFeedbackInfoItemType type = UserFeedbackInfoItemType.RECORD;
@@ -27,6 +30,14 @@ public class UserFeedbackInfoItem extends User implements Comparable<UserFeedbac
     private int monthsDifference = -1;
     private int daysDifference = -1;
     private int weekDifference = -1;
+
+    public UserFeedbackInfoItem() {
+        super();
+    }
+
+    protected UserFeedbackInfoItem(Parcel in) {
+        super(in);
+    }
 
     @Override
     public int compareTo(UserFeedbackInfoItem o) {

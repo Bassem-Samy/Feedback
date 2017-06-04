@@ -17,4 +17,7 @@
     <string name="week_ago">Week ago</string>
     <string name="no_items_here">No items here</string>
     <string name="reset">Reset</string>
+    <string name="user_image_transition_name">userImageTransitionName</string>
+    <string name="feedback_given_to">Feedback given to:</string>
+    <string name="select_user">Select a user</string>
 </resources>

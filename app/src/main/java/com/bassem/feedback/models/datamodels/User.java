@@ -1,5 +1,8 @@
 package com.bassem.feedback.models.datamodels;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -8,7 +11,7 @@ import java.util.List;
  * Created by Bassem Samy on 6/1/2017.
  */
 
-public class User {
+public class User implements Parcelable {
     @SerializedName("id")
     private String id;
     @SerializedName("email")
@@ -19,6 +22,29 @@ public class User {
     private List<LastInteraction> lastInteractions;
     @SerializedName("avatar")
     private String avatar;
+
+    public User() {
+    }
+
+    protected User(Parcel in) {
+        id = in.readString();
+        email = in.readString();
+        name = in.readString();
+        lastInteractions = in.createTypedArrayList(LastInteraction.CREATOR);
+        avatar = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -60,4 +86,17 @@ public class User {
         this.avatar = avatar;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(email);
+        parcel.writeString(name);
+        parcel.writeTypedList(lastInteractions);
+        parcel.writeString(avatar);
+    }
 }
