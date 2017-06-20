@@ -5,7 +5,6 @@ android {
         config {
             keyAlias 'feedbackalias'
             keyPassword 'feedback123456'
-            storeFile file('D:/Bassoum/Impraise/Code/app/keystore/keystore.jks')
             storePassword 'feedback123456'
         }
     }
