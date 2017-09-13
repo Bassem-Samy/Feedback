@@ -4,7 +4,7 @@ A simple app that loads a list of users, sorts them by last interaction's date (
 
 ## Technical Description:
 * The app is structured in MVP.
-* My most valuable reference for implementing MVP in android is [Antonio Leiva's Post](https://www.dropbox.com/s/r0wy953e50q0cra/feedback-app-release.apk?dl=0)
+* My most valuable reference for implementing MVP in android is [Antonio Leiva's Post](https://github.com/antoniolg/androidmvp)
 * I used Dagger2 to inject dependencies in userslisting module.
 * Added Android Unit Test to test users listing module. (for the tests to pass make sure the dates for the last interacted items to be recent i.e. less than two weeks old)
 * Added unit test to test users' sorting according to their latest interaction in descending order.
